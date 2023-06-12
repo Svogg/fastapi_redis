@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  redis:
+    container_name: redis
+    image: redis
+    command:
+      - redis-server
+    ports:
+      - '6379:6379'
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+
+  backend:
+    container_name: backend
+    build:
+      dockerfile: backend_service/Dockerfile
+    command: bash -c "cd backend_service && uvicorn main:app --host 0.0.0.0 --port 8000"
+    depends_on:
+      redis:
+        condition: "service_healthy"
+    ports:
+      - '8000:8000'
