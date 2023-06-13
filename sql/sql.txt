@@ -1,0 +1,36 @@
+-- Create tables
+create table if not exists short_names (
+    name text,
+    status integer
+);
+
+create table if not exists full_names (
+    name text,
+    status integer
+);
+
+-- Create indexes for faster searching
+create index if not exists
+short_names_name_idx on short_names (name);
+
+create index if not exists
+full_name_name_idx on full_names (name);
+
+-- insert values using genereate_series function and random, which get 0 if random value <= 0.5 else 1
+insert into short_names (name, status)
+select 'nazvanie' || generate_series(1, 700000),
+case
+	when random() <= 0.5 then 0
+	else 1
+end;
+
+-- insert values using generate_series function whith floor (round function) and random
+insert into full_names (name, status)
+select 'nazvanie' || generate_series(1, 500000) || '.' || ((array['txt', 'mp3', 'png'])[floor(random() * 3 + 1)]), 0
+
+-- update table with function left which gives substr of str and func strpos which gives index of substr
+update full_names
+set status = short_names.status
+from short_names
+where short_names.name = left(full_names.name, strpos(full_names.name, '.') - 1)
+
