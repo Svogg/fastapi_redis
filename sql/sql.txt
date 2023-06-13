@@ -28,7 +28,7 @@ end;
 insert into full_names (name, status)
 select 'nazvanie' || generate_series(1, 500000) || '.' || ((array['txt', 'mp3', 'png'])[floor(random() * 3 + 1)]), 0
 
--- update table with function left which gives substr of str and func strpos which gives index of substr
+-- update table with function left which gives substr of str and func strpos which gives index of substr. avg time 6 sec
 update full_names
 set status = short_names.status
 from short_names
